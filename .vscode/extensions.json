@@ -1,7 +1,5 @@
 {
-  "recommendations": [
-    "esbenp.prettier-vscode",
-    "ms-vscode.vscode-typescript-tslint-plugin",
-    "moppitz.vscode-extension-auto-import"
-  ]
+    "recommendations": [
+        "esbenp.prettier-vscode"
+    ]
 }
