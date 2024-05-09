@@ -4,6 +4,7 @@ import cors from 'cors'
 import helmet from 'helmet'
 import endpoints from './services/'
 import RouteHelper from './libs/helpers/route.helper'
+
 const app = express()
 
 dotenv.config()

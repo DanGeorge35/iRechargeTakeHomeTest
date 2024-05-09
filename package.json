@@ -66,6 +66,7 @@
     "multer": "^1.4.5-lts.1",
     "mysql2": "^3.6.2",
     "nodemailer": "^6.9.5",
+    "redis": "^4.6.13",
     "sequelize": "^6.33.0",
     "shp-write": "^0.3.2",
     "sql-escape": "^1.0.1",
