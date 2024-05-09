@@ -1,0 +1,14 @@
+{
+    "items": [
+        {
+            "name": "Nova (Antenna) - Monthly",
+            "code": "nova",
+            "price": 1000
+        },
+        {
+            "name": "Nova (Antenna) - Weekly",
+            "code": "novaweek",
+            "price": 350
+        }
+    ]
+}

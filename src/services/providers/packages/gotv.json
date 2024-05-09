@@ -1,0 +1,19 @@
+{
+    "items": [
+        {
+            "price": 2800,
+            "code": "GOTVNJ2",
+            "name": "GOtv Jolli Bouquet"
+        },
+        {
+            "price": 1900,
+            "code": "GOTVNJ1",
+            "name": "GOtv Jinja Bouquet"
+        },
+        {
+            "price": 10500,
+            "code": "GOTVSUPAPLUS",
+            "name": "GOtv Supa Plus"
+        }
+    ]
+}
