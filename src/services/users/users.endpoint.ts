@@ -27,7 +27,7 @@ const UsersEndpoint = [
   {
     path: `${ENDPOINT_URL}/`,
     method: 'get',
-    handler: [UsersController.getallUsers]
+    handler: [Authorization, UsersController.getallUsers]
   },
   {
     path: `${ENDPOINT_URL}/:id`,
