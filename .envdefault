@@ -1,0 +1,6 @@
+PORT=7001
+HOST=localhost
+DB=irechargedatabase
+DBPASS=
+DBUSER=root
+jwtkey=///9eff-e13613a1f7f4
