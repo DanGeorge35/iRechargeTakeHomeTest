@@ -8,6 +8,15 @@ class RouteHelper {
       (router as any)[method](`${path}`, handler)
     }
 
+    router.get('/', (req: any, res: any) => {
+      res.setHeader('content-type', 'application/json')
+      const report = {
+        message: 'Welcome to irechargetest (by Dan George)',
+        code: 200
+      }
+      res.status(200).send(report)
+    })
+
     router.get('/health', (req: any, res: any) => {
       res.setHeader('content-type', 'application/json')
       const report = {
