@@ -32,10 +32,35 @@ COPY . .
 # Build the TypeScript application
 RUN npm run build
 
+# Stage 2: Create .env file
+FROM node:20.10.0 AS env
+
+# Set the working directory
+WORKDIR /app
+
+# Create the .env file
+RUN echo "DB_NAME=irechargedb" >> .env \
+    && echo "DB_USER=postgres" >> .env \
+    && echo "DB_PASS=password" >> .env \
+    && echo "DB_HOST=postgres" >> .env \
+    && echo "PORT=7001" >> .env \
+    && echo "jwtkey=irecharge-df354a95-d41b-d6a8-9eff-e13613a1f7f4" >> .env \
+    && echo "HOST=localhost" >> .env
+
+# Stage 3: Final stage
+FROM node:20.10.0 AS final
+
+# Set the working directory
+WORKDIR /app
+
+# Copy the .env file from the env stage
+COPY --from=env /app/.env ./
+
+# Copy the built application from the build stage
+COPY --from=build /app/dist ./dist
+
 # Expose the port the app runs on
 EXPOSE 7001
-EXPOSE 6379
-EXPOSE 5432
 
 # Command to run the application
 CMD ["npm", "test"]

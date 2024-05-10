@@ -96,17 +96,14 @@ iRechargeTakeHomeTest API is built using:
 
 - Docker installed on your machine.
 
-#### Steps
-
-Clone the repository to your local machine.
+- Clone the repository to your local machine.
 
 ```bash
-git clone <repository-url>
-cd <project-directory>
- docker-compose up --build
+docker-compose up --build
 ```
 
-http://localhost:<host-port>
+#### BaseUrl
+http://localhost:7001
 
 
 
