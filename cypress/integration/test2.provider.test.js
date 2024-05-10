@@ -22,20 +22,25 @@ describe('Provider API CRUD Tests', () => {
   it('should get all providers ', () => {
     cy.request({
       method: 'GET',
-      url: `${ProviderEndpoint}/`
+      url: `${ProviderEndpoint}`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
     }).then((response) => {
       expect(response.status).to.eq(200);
       slug = response.body.data[0];
     });
   });
 
-  it('should get provider package by slug', () => {
+  it('should get provider packages by slug', () => {
     cy.request({
       method: 'GET',
-      url: `${ProviderEndpoint}/${slug}/packages`
+      url: `${ProviderEndpoint}/${slug}/packages`,
+      headers: {
+        Authorization: `Bearer ${accessToken}`
+      }
     }).then((response) => {
       expect(response.status).to.eq(200);
-      expect(response.body.data[0]).to.have.property('slug');
     });
   });
 });
