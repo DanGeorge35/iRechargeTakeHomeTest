@@ -5,17 +5,12 @@ import dotenv from 'dotenv'
 import { EncryptPassword, GenerateToken, CheckPassword } from '../../libs/utils/app.utility'
 import { User } from '../../models/user.model'
 import UsersValidation from './users.validation'
+import { getOrSetCache } from '../../config/redis'
+const CACHE_EXPIRATION = 120
 
 dotenv.config()
 
 class UserController {
-  /**
- * Create User
- *
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- * @returns {Promise<any>} A Promise that resolves to the response.
- */
   static async createUser (req: any, res: any): Promise<any> {
     try {
       const data = req.body
@@ -101,13 +96,16 @@ class UserController {
     try {
       const { id } = req.params
 
-      const singleUser = await User.findOne({ where: { id } })
+      const dresult = await getOrSetCache(`users/${id}`, CACHE_EXPIRATION, async () => {
+        const singleUser = await User.findOne({ where: { id } })
+        return singleUser
+      })
 
-      if (!singleUser) {
+      if (!dresult) {
         return res.status(400).json({ success: false, data: `No User with the id ${req.params.id}` })
       }
 
-      return res.status(201).json({ success: true, data: singleUser })
+      return res.status(201).json({ success: true, data: dresult })
     } catch (error: any) {
       const err = { success: false, code: 400, message: `SYSTEM ERROR : ${error.message}` }
       console.error(error)
@@ -115,13 +113,6 @@ class UserController {
     }
   }
 
-  /**
- * Get All User
- *
- * @param {Object} req - The request object.
- * @param {Object} res - The response object.
- * @returns {Promise<any>} A Promise that resolves to the response.
- */
   static async getallUsers (req: any, res: any): Promise<any> {
     const PAGE_SIZE = 10
 
@@ -131,53 +122,25 @@ class UserController {
       if (req.query.page && typeof req.query.page === 'string') {
         page = parseInt(req.query.page, 10)
       }
-
-      const allUser = await User.findAndCountAll({
-        limit: PAGE_SIZE,
-        offset: (page - 1) * PAGE_SIZE
+      const dresult = await getOrSetCache(`users?${req.query.page}`, CACHE_EXPIRATION, async () => {
+        const allUser = await User.findAndCountAll({
+          limit: PAGE_SIZE,
+          offset: (page - 1) * PAGE_SIZE
+        })
+        return allUser
       })
 
-      const totalPages = Math.ceil(allUser.count / PAGE_SIZE)
+      const totalPages = Math.ceil(dresult.count / PAGE_SIZE)
 
       return res.status(201).json({
         success: true,
-        data: allUser.rows,
+        data: dresult.rows,
         pagination: {
           currentPage: page,
           totalPages,
           pageSize: PAGE_SIZE
         }
       })
-    } catch (error: any) {
-      const err = { success: false, code: 400, message: `SYSTEM ERROR : ${error.message}` }
-      console.error(error)
-      return res.status(400).json(err)
-    }
-  }
-
-  static async reservedEvent (req: any, res: any): Promise<any> {
-    try {
-      const userId = req.params.id
-      const updatedInfo = req.body
-
-      const validate = await UsersValidation.validateUpdateUsers(updatedInfo)
-      if (validate.result === 'error') {
-        const result: { code: number, message: string } = {
-          code: 400,
-          message: validate.message
-        }
-        return res.status(result.code).json({ ...result, success: false })
-      }
-
-      const user = await User.findByPk(userId)
-
-      if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' })
-      }
-
-      const duser = await user.update(updatedInfo)
-
-      return res.status(201).json({ success: true, data: duser, message: 'User information updated' })
     } catch (error: any) {
       const err = { success: false, code: 400, message: `SYSTEM ERROR : ${error.message}` }
       console.error(error)

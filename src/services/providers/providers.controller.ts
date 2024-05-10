@@ -1,30 +1,20 @@
 /* eslint-disable @typescript-eslint/no-extraneous-class */
 import providers from '../../packages'
-import * as Redis from 'redis'
+import { getOrSetCache } from '../../config/redis'
+const CACHE_EXPIRATION = 120
 
 class ProvidersController {
   static async getallProviders (req: any, res: any): Promise<any> {
     try {
-      const providerslug = []
-
-      const redisClient = Redis.createClient()
-
-      redisClient.on('error', function (error) {
-        console.error(error)
-      })
-
-      const dprovider = await redisClient.get('providers')
-      if (dprovider === null) {
+      const dresult = await getOrSetCache('providers', CACHE_EXPIRATION, () => {
+        const providerslug = []
         for (let i = 0; i < providers.length; i++) {
           providerslug.push(providers[i].slug)
         }
+        return providerslug
+      })
 
-        await redisClient.setEx('providers', 3000, JSON.stringify(providerslug))
-
-        return res.status(200).json({ success: true, data: providerslug, code: 200 })
-      } else {
-        return res.status(200).json({ success: true, data: JSON.parse(dprovider), code: 200 })
-      }
+      return res.status(200).json({ success: true, data: dresult, code: 200 })
     } catch (err: any) {
       return res.status(500).json({ success: false, message: `SYSTEM ERROR : ${err.message}`, code: 500 })
     }
@@ -33,9 +23,14 @@ class ProvidersController {
   static async getProviderPackages (req: any, res: any): Promise<any> {
     try {
       const slug = req.params.slug
-      const foundPackage = providers.find(provider => provider.slug === slug)
-      if (foundPackage !== null) {
-        return res.status(200).json({ success: true, data: foundPackage, code: 200 })
+
+      const dresult = await getOrSetCache(slug, CACHE_EXPIRATION, () => {
+        const foundPackage = providers.find(provider => provider.slug === slug)
+        return foundPackage ?? null
+      })
+
+      if (dresult !== null) {
+        return res.status(200).json({ success: true, data: dresult, code: 200 })
       } else {
         return res.status(404).json({ success: false, message: 'Not Found', code: 404 })
       }
