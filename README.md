@@ -46,6 +46,20 @@ iRechargeTakeHomeTest API is built using:
 
 ## Endpoints
 
+### Welcome Message
+
+- **URL:** `/`
+- **Method:** `GET`
+- **Description:** Retrieves a welcome message.
+
+
+### Health Check
+
+- **URL:** `/health`
+- **Method:** `GET`
+- **Description:** Checks the health of the service.
+
+
 ### Auth Endpoint
 
 - **Path**: `http://localhost:7001/auth`
