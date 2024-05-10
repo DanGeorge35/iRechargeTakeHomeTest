@@ -71,6 +71,6 @@
     "shp-write": "^0.3.2",
     "sql-escape": "^1.0.1",
     "ts-node": "^10.9.1",
-    "winston": "^3.10.0"
+    "winston": "^3.13.0"
   }
 }

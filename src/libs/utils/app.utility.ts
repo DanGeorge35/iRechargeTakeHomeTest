@@ -1,6 +1,7 @@
 import jwt from 'jsonwebtoken'
 import bcrypt from 'bcryptjs'
 import dotenv from 'dotenv'
+import { createErrorResponse, sendResponse } from '../../libs/helpers/response.helper'
 dotenv.config()
 
 function Authorization (req: any, res: any, next: any): any {
@@ -8,22 +9,18 @@ function Authorization (req: any, res: any, next: any): any {
   const authHeader = req.headers.authorization
   const token = authHeader?.split(' ')[1]
   if (token == null) {
-    return res.status(401).json({
-      success: false,
-      message: 'Not Authorised',
-      code: 401
-    })
+    const resp = createErrorResponse(401, 'Not Authorised')()
+    sendResponse(res, resp)
+    return res.end()
   }
 
   // eslint-disable-next-line consistent-return
   const JWT_KEY: any = process.env.jwtkey
   jwt.verify(token, JWT_KEY, (err: any, user: any) => {
     if (err !== null) {
-      return res.status(403).json({
-        success: false,
-        message: 'Invalid Token',
-        code: 403
-      })
+      const resp = createErrorResponse(401, 'Invalid Token')()
+      sendResponse(res, resp)
+      return res.end()
     }
     req.user = user
     next()

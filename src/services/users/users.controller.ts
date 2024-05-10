@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/strict-boolean-expressions */
 /* eslint-disable @typescript-eslint/no-extraneous-class */
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import dotenv from 'dotenv'
 import { EncryptPassword, GenerateToken, CheckPassword } from '../../libs/utils/app.utility'
 import { User } from '../../models/user.model'
 import UsersValidation from './users.validation'
 import { getOrSetCache } from '../../config/redis'
+import { type IResponse, createSuccessResponse, createErrorResponse, serverError, sendResponse } from '../../libs/helpers/response.helper'
 const CACHE_EXPIRATION = 120
 
 dotenv.config()
@@ -16,37 +15,31 @@ class UserController {
       const data = req.body
       const validate = await UsersValidation.validateCreateUsers(data)
       if (validate.result === 'error') {
-        const result: { code: number, message: string } = {
-          code: 400,
-          message: validate.message
-        }
-        return res.status(result.code).json({ ...result, success: false })
+        const resp = createErrorResponse(400, validate.message)()
+        sendResponse(res, resp)
+        return res.end()
       }
 
       const checkExist = await User.findOne({ where: { email: data.email } })
       if (checkExist !== null) {
-        return res.status(400).json({
-          success: false,
-          message: 'Email Already Exist',
-          code: 400
-        })
+        const resp = createErrorResponse(400, 'Email Already Exist')()
+        sendResponse(res, resp)
+        return res.end()
       }
       // generate data.usercode from user max id
       const result: number = await User.max('id')
 
-      const lastId = result || 0
+      const lastId = result ?? 0
       data.usercode = Math.floor(lastId + 1000)
 
       data.password = await EncryptPassword(data.password)
       const user = await User.create(data)
 
-      return res.status(201).json({ success: true, message: 'Successfully Created', data: user })
+      const successResponse: IResponse = createSuccessResponse(user)
+      sendResponse(res, successResponse)
+      return res.end()
     } catch (error: any) {
-      return res.status(400).json({
-        success: false,
-        message: error.message,
-        code: 400
-      })
+      sendResponse(res, serverError(error.message))
     }
   }
 
@@ -55,40 +48,34 @@ class UserController {
       const { email, password } = req.body
 
       if ((email === '') || (password === '')) {
-        const result: any = { code: 400, message: 'Email and password is required' }
-        return res.status(result.code).json(result)
+        const resp = createErrorResponse(400, 'Email and password is required')()
+        sendResponse(res, resp)
+        return res.end()
       }
 
       const user: any = await User.findOne({ where: { email } })
 
       if (user === null) {
-        const result: any = {
-          success: false,
-          message: 'Email Address Not Found!',
-          code: 400
-        }
-        return res.status(result.code).json(result)
+        const resp = createErrorResponse(400, 'Email Address Not Found!')()
+        sendResponse(res, resp)
+        return res.end()
       }
       // compare passwords ------------------------------
       const isValidPassword = await CheckPassword(password, user.password)
       if (!isValidPassword) {
-        const result: any = {
-          success: false,
-          message: 'Incorret Password!',
-          code: 400
-        }
-        return res.status(result.code).json(result)
+        const resp = createErrorResponse(400, 'Incorret Password!')()
+        sendResponse(res, resp)
+        return res.end()
       }
 
       const token = GenerateToken(user)
-      return res.status(201).json({ success: true, code: 201, data: user, token })
+
+      const successResponse: IResponse = createSuccessResponse(user, 201)
+      successResponse.token = token
+      sendResponse(res, successResponse)
+      return res.end()
     } catch (error: any) {
-      const result: any = {
-        success: false,
-        message: 'Error login in: ' + error.message,
-        code: 400
-      }
-      return res.status(result.code).json(result)
+      sendResponse(res, serverError('LOGIN ERROR : ' + error.message))
     }
   }
 
@@ -101,15 +88,17 @@ class UserController {
         return singleUser
       })
 
-      if (!dresult) {
-        return res.status(400).json({ success: false, data: `No User with the id ${req.params.id}` })
+      if (dresult == null) {
+        const resp = createErrorResponse(400, `No User with the id ${req.params.id}`)()
+        sendResponse(res, resp)
+        return res.end()
       }
 
-      return res.status(201).json({ success: true, data: dresult })
+      const successResponse: IResponse = createSuccessResponse(dresult)
+      sendResponse(res, successResponse)
+      return res.end()
     } catch (error: any) {
-      const err = { success: false, code: 400, message: `SYSTEM ERROR : ${error.message}` }
-      console.error(error)
-      return res.status(400).json(err)
+      sendResponse(res, serverError(error.message))
     }
   }
 
@@ -118,11 +107,11 @@ class UserController {
 
     try {
       let page: number = 1
-
-      if (req.query.page && typeof req.query.page === 'string') {
-        page = parseInt(req.query.page, 10)
+      const requestQuery: string = req.query.page ?? null
+      if ((requestQuery !== null) && (typeof requestQuery === 'string')) {
+        page = parseInt(requestQuery, 10)
       }
-      const dresult = await getOrSetCache(`users?${req.query.page}`, CACHE_EXPIRATION, async () => {
+      const dresult = await getOrSetCache(`users?${requestQuery}`, CACHE_EXPIRATION, async () => {
         const allUser = await User.findAndCountAll({
           limit: PAGE_SIZE,
           offset: (page - 1) * PAGE_SIZE
@@ -132,19 +121,16 @@ class UserController {
 
       const totalPages = Math.ceil(dresult.count / PAGE_SIZE)
 
-      return res.status(201).json({
-        success: true,
-        data: dresult.rows,
-        pagination: {
-          currentPage: page,
-          totalPages,
-          pageSize: PAGE_SIZE
-        }
-      })
+      const successResponse: IResponse = createSuccessResponse(dresult)
+      successResponse.pagination = {
+        currentPage: page,
+        totalPages,
+        pageSize: PAGE_SIZE
+      }
+      sendResponse(res, successResponse)
+      return res.end()
     } catch (error: any) {
-      const err = { success: false, code: 400, message: `SYSTEM ERROR : ${error.message}` }
-      console.error(error)
-      return res.status(400).json(err)
+      sendResponse(res, serverError(error.message))
     }
   }
 
@@ -155,26 +141,26 @@ class UserController {
 
       const validate = await UsersValidation.validateUpdateUsers(updatedInfo)
       if (validate.result === 'error') {
-        const result: { code: number, message: string } = {
-          code: 400,
-          message: validate.message
-        }
-        return res.status(result.code).json({ ...result, success: false })
+        const resp = createErrorResponse(400, validate.message)()
+        sendResponse(res, resp)
+        return res.end()
       }
 
       const user = await User.findByPk(userId)
 
-      if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' })
+      if (user == null) {
+        const resp = createErrorResponse(404, 'User not found')()
+        sendResponse(res, resp)
+        return res.end()
       }
 
       const duser = await user.update(updatedInfo)
 
-      return res.status(201).json({ success: true, data: duser, message: 'User information updated' })
+      const successResponse: IResponse = createSuccessResponse(duser, 201, 'User information updated')
+      sendResponse(res, successResponse)
+      return res.end()
     } catch (error: any) {
-      const err = { success: false, code: 400, message: `SYSTEM ERROR : ${error.message}` }
-      console.error(error)
-      return res.status(400).json(err)
+      sendResponse(res, serverError(error.message))
     }
   }
 
@@ -185,15 +171,15 @@ class UserController {
       const user = await User.findByPk(loginUser.id)
       const validate = await UsersValidation.validateUserPassword(newPassword)
       if (validate.result === 'error') {
-        const result: { code: number, message: string } = {
-          code: 400,
-          message: validate.message
-        }
-        return res.status(result.code).json({ ...result, success: false })
+        const resp = createErrorResponse(400, validate.message)()
+        sendResponse(res, resp)
+        return res.end()
       }
 
-      if (!user) {
-        return res.status(404).json({ success: false, message: 'User not found' })
+      if (user == null) {
+        const resp = createErrorResponse(404, 'User not found')()
+        sendResponse(res, resp)
+        return res.end()
       }
       const isValidPassword = await CheckPassword(oldPassword, user.password)
       if (!isValidPassword) {
@@ -205,11 +191,11 @@ class UserController {
       }
       const newPasswordHash = await EncryptPassword(newPassword)
       const duser = await user.update({ password: newPasswordHash })
-      return res.status(201).json({ success: true, data: duser, message: 'Password Updated Successfully' })
+      const successResponse: IResponse = createSuccessResponse(duser, 201, 'Password updated successfully')
+      sendResponse(res, successResponse)
+      return res.end()
     } catch (error: any) {
-      const err = { success: false, code: 400, message: `SYSTEM ERROR : ${error.message}` }
-      console.error(error)
-      return res.status(400).json(err)
+      sendResponse(res, serverError(error.message))
     }
   }
 }

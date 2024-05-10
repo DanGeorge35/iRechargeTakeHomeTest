@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-extraneous-class */
 import providers from '../../packages'
 import { getOrSetCache } from '../../config/redis'
+import { type IResponse, createSuccessResponse, notFound, serverError, sendResponse } from '../../libs/helpers/response.helper'
+
 const CACHE_EXPIRATION = 120
 
 class ProvidersController {
@@ -13,10 +15,10 @@ class ProvidersController {
         }
         return providerslug
       })
-
-      return res.status(200).json({ success: true, data: dresult, code: 200 })
+      const successResponse: IResponse = createSuccessResponse(dresult)
+      sendResponse(res, successResponse)
     } catch (err: any) {
-      return res.status(500).json({ success: false, message: `SYSTEM ERROR : ${err.message}`, code: 500 })
+      sendResponse(res, serverError(err.message))
     }
   }
 
@@ -30,13 +32,14 @@ class ProvidersController {
       })
 
       if (dresult !== null) {
-        return res.status(200).json({ success: true, data: dresult, code: 200 })
+        const successResponse: IResponse = createSuccessResponse(dresult)
+        sendResponse(res, successResponse)
       } else {
-        return res.status(404).json({ success: false, message: 'Not Found', code: 404 })
+        sendResponse(res, notFound())
       }
     } catch (error: any) {
       console.error(error)
-      return res.status(400).json({ success: false, message: `SYSTEM ERROR : ${error.message}`, code: 400 })
+      sendResponse(res, serverError(error.message))
     }
   }
 }
