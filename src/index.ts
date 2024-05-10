@@ -6,7 +6,6 @@ import endpoints from './services/'
 import RouteHelper from './libs/helpers/route.helper'
 
 const app = express()
-
 dotenv.config()
 
 // MiddleWare
@@ -19,6 +18,7 @@ app.use(helmet()) // Security first middleware
 app.use(express.json()) // for parsing application/json
 app.use(express.urlencoded({ extended: true })) // for parsing application/x-www-form-urlencoded
 app.use(cors(corsOptions))
+// MiddleWare
 
 try {
   RouteHelper.initRoutes(endpoints, app)
