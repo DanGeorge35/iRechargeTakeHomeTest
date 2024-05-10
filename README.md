@@ -48,14 +48,14 @@ iRechargeTakeHomeTest API is built using:
 
 ### Welcome Message
 
-- **URL:** `/`
+- **URL:** `http://localhost:7001/`
 - **Method:** `GET`
 - **Description:** Retrieves a welcome message.
 
 
 ### Health Check
 
-- **URL:** `/health`
+- **URL:** `http://localhost:7001/health`
 - **Method:** `GET`
 - **Description:** Checks the health of the service.
 
