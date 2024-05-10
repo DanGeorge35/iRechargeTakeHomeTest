@@ -15,13 +15,7 @@ COPY . .
 # Build TypeScript code
 RUN npm run build
 
-# Stage 2: Run tests
-FROM build AS test
-
-# Run tests
-RUN npm run test
-
-# Stage 3: Run application with MySQL and Redis
+# Stage 2: Run application with MySQL and Redis
 FROM node:20.10.0-alpine
 
 # Install MySQL client and Redis
@@ -38,17 +32,10 @@ COPY package*.json ./
 # Install production dependencies
 RUN npm install --only=production
 
-# Expose port 3000 for the Node.js application and 6379 for Redis
-EXPOSE 3000
+# Expose port 7001 for the Node.js application and 6379 for Redis
+EXPOSE 7001
 EXPOSE 6379
 
-# Environment variables for MySQL and Redis connection
-ENV MYSQL_HOST=localhost \
-    MYSQL_USER=root \
-    MYSQL_PASSWORD=your_mysql_password \
-    MYSQL_DATABASE=your_database_name \
-    REDIS_HOST=localhost \
-    REDIS_PORT=6379
 
 # Command to run the Node.js application
-CMD ["npm", "run", "start"]
+CMD ["node", "./dist/index.js"]

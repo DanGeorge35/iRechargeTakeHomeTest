@@ -63,7 +63,7 @@ class UserController {
       // compare passwords ------------------------------
       const isValidPassword = await CheckPassword(password, user.password)
       if (!isValidPassword) {
-        const resp = createErrorResponse(400, 'Incorret Password!')()
+        const resp = createErrorResponse(400, 'Incorrect Password!')()
         sendResponse(res, resp)
         return res.end()
       }

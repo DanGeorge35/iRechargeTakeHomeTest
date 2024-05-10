@@ -7,12 +7,12 @@ const sequelize = new Sequelize(
   process.env.DBUSER ?? '',
   process.env.DBPASS ?? '',
   {
-    host: 'localhost',
-    dialect: 'mysql',
-    port: 3306
+    host: process.env.HOST,
+    dialect: 'postgres',
+    port: 5432,
+    timezone: '+01:00'
   }
 )
-
 sequelize
   .authenticate()
   .then(() => { console.log('Connection has been established successfully.') })

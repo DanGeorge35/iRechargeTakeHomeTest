@@ -1,0 +1,23 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - '7001:7001'
+    depends_on:
+      - mysql
+      - redis
+
+  mysql:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: irechargedb
+      MYSQL_USER: root
+      MYSQL_PASSWORD: password
+
+  redis:
+    image: redis:latest
+    restart: always
