@@ -43,6 +43,8 @@ iRechargeTakeHomeTest API is built using:
 - POSTGRESSQL (Sequelise ORM)
 - Express Web Framework
 - NPM
+- Redis
+- Docker
 
 ## Endpoints
 
