@@ -48,45 +48,66 @@ iRechargeTakeHomeTest API is built using:
 
 ### Auth Endpoint
 
-- **Path**: `/auth`
+- **Path**: `http://localhost:7001/auth`
 - **Method**: `POST`
 - **Description**: This endpoint is used for user authentication, allowing users to log in.
 - **Handler**: UsersController.Login
 
 ### Create User Endpoint
 
-- **Path**: `${ENDPOINT_URL}/`
+- **Path**: `http://localhost:7001/users/`
 - **Method**: `POST`
 - **Description**: Create a new user account.
 - **Handler**: UsersController.createUser
 
 ### Update User Endpoint
 
-- **Path**: `${ENDPOINT_URL}/:id`
+- **Path**: `http://localhost:7001/users/:id`
 - **Method**: `PATCH`
 - **Description**: Updates an existing user's information.
 - **Handler**: Authorization, UsersController.updateUser
 
 ### Change Password Endpoint
 
-- **Path**: `${ENDPOINT_URL}/changepassword`
+- **Path**: `http://localhost:7001/users/changepassword`
 - **Method**: `PUT`
 - **Description**: Allows users to change their password.
 - **Handler**: Authorization, UsersController.changePassword
 
 ### Get All Users Endpoint
 
-- **Path**: `${ENDPOINT_URL}/`
+- **Path**: `http://localhost:7001/users/`
 - **Method**: `GET`
 - **Description**: Retrieves a list of all users.
 - **Handler**: Authorization, UsersController.getAllUsers
 
 ### Get Single User Endpoint
 
-- **Path**: `${ENDPOINT_URL}/:id`
+- **Path**: `http://localhost:7001/users/:id`
 - **Method**: `GET`
 - **Description**: Retrieves information about a specific user.
 - **Handler**: UsersController.getSingleUser
+
+
+
+### Providers
+
+#### Get All Providers
+
+- **URL:** `http://localhost:7001/providers/`
+- **Method:** `GET`
+- **Description:** Retrieves all providers.
+- **Authorization Required:** Yes
+
+
+#### Get Provider Packages
+
+- **URL:** `http://localhost:7001/providers/:slug/packages`
+- **Method:** `GET`
+- **Description:** Retrieves packages for a specific provider.
+- **Authorization Required:** No
+
+
 
 ## Deployment
 
