@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y \
     xvfb
 
 # Cleanup to reduce image size (optional but recommended)
-RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+# RUN apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # Copy the rest of the application files
 COPY . .
@@ -34,6 +34,8 @@ RUN npm run build
 
 # Expose the port the app runs on
 EXPOSE 7001
+EXPOSE 6379
+EXPOSE 5432
 
 # Command to run the application
 CMD ["npm", "start"]

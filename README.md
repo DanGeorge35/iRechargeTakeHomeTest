@@ -40,7 +40,7 @@ The documentation for all endpoints implemented for the iRechargeTakeHomeTest AP
 iRechargeTakeHomeTest API is built using:
 
 - NodeJS (TypeScript) v20.10.0
-- MySQL (Sequelise ORM)
+- POSTGRESSQL (Sequelise ORM)
 - Express Web Framework
 - NPM
 
