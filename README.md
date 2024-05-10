@@ -30,11 +30,10 @@ provider.
    purchase functionality. It only provides information about what products are available and how
    to access it.
 
-## Running the Application Locally
 
 ## Documentation
 
-The documentation for all endpoints implemented for the iRechargeTakeHomeTest API can be found [here](https://documenter.getpostman.com/view/10671823/2sA3JM6gEWhttps://documenter.getpostman.com/view/10671823/2sA3JM6gEW).
+The documentation for all endpoints implemented for the iRechargeTakeHomeTest API can be found here [https://documenter.getpostman.com/view/10671823/2sA3JM6gEW](https://documenter.getpostman.com/view/10671823/2sA3JM6gEW).
 
 ## Technologies
 
