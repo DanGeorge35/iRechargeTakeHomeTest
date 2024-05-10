@@ -1,41 +1,39 @@
 # Stage 1: Build TypeScript application
 FROM node:20.10.0 AS build
 
+# Set the working directory
 WORKDIR /app
 
-# Copy package.json and package-lock.json (if available)
+# Copy package.json and package-lock.json to the working directory
 COPY package*.json ./
 
 # Install dependencies
 RUN npm install
 
-# Copy the rest of the application code
+# Install additional dependencies
+RUN apt-get update && apt-get install -y \
+    libgtk2.0-0 \
+    libgtk-3-0 \
+    libgbm-dev \
+    libnotify-dev \
+    libnss3 \
+    libxss1 \
+    libasound2 \
+    libxtst6 \
+    xauth \
+    xvfb
+
+# Cleanup to reduce image size (optional but recommended)
+RUN apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# Copy the rest of the application files
 COPY . .
 
-# Build TypeScript code
+# Build the TypeScript application
 RUN npm run build
 
-# Stage 2: Run application with MySQL and Redis
-FROM node:20.10.0-alpine
-
-# Install MySQL client and Redis
-RUN apk update && \
-    apk add --no-cache mysql-client redis
-
-# Set working directory inside the container
-WORKDIR /app
-
-# Copy compiled JavaScript code from the previous stage
-COPY --from=build /app/dist ./dist
-COPY package*.json ./
-
-# Install production dependencies
-RUN npm install --only=production
-
-# Expose port 7001 for the Node.js application and 6379 for Redis
+# Expose the port the app runs on
 EXPOSE 7001
-EXPOSE 6379
 
-
-# Command to run the Node.js application
-CMD ["node", "./dist/index.js"]
+# Command to run the application
+CMD ["npm", "start"]

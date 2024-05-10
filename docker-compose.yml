@@ -1,44 +1,47 @@
-version: '3'
+version: '3.8'
 
 services:
-  mysql:
-    image: mysql:5.7
-    ports:
-      - '3306:3306'
+  postgres:
+    image: postgres:latest
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: irechargedb
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
-    volumes:
-      - mysql-data:/var/lib/mysql
+      POSTGRES_DB: irechargedb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+    ports:
+      - '5432:5432'
+    networks:
+      - irecharge-network
+    healthcheck:
+      test: ['CMD-SHELL', 'pg_isready -U postgres']
+      interval: 10s
+      timeout: 5s
+      retries: 5
 
   redis:
     image: redis:alpine
     ports:
       - '6379:6379'
+    networks:
+      - irecharge-network
 
   app:
     build:
       context: .
-      dockerfile: Dockerfile
+    environment:
+      PORT: 7001
+      HOST: postgres
+      DB: irechargedb
+      DBPASS: password
+      DBUSER: postgres
+      jwtkey: irecharge-df354a95-d41b-d6a8-9eff-e13613a1f7f4
     ports:
       - '7001:7001'
     depends_on:
-      - mysql
+      - postgres
       - redis
-    environment:
-      HOST: localhost
-      DB_NAME: irechargedb
-      DB_USER: root
-      DB_PASS: password
-      PORT: 7001
-      MYSQL_HOST: mysql
-      MYSQL_USER: root
-      MYSQL_PASSWORD: password
-      MYSQL_DATABASE: irechargedb
-      REDIS_HOST: redis
-      REDIS_PORT: 6379
+    networks:
+      - irecharge-network
 
-volumes:
-  mysql-data:
+networks:
+  irecharge-network:
+    driver: bridge

@@ -6,7 +6,7 @@
     "module": "commonjs",
     "rootDir": "./",
     "outDir": "./dist",
-    "types": ["node", "mocha", "@types/bcryptjs"],
+    "types": ["node", "@types/bcryptjs"],
     "forceConsistentCasingInFileNames": true,
     "strict": true,
     "skipLibCheck": true
