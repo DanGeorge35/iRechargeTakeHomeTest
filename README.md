@@ -103,8 +103,7 @@ Clone the repository to your local machine.
 ```bash
 git clone <repository-url>
 cd <project-directory>
-docker build -t <image-name> .
-docker run -d -p <host-port>:<container-port> --name <container-name> <image-name>
+ docker-compose up --build
 ```
 
 http://localhost:<host-port>
@@ -117,6 +116,8 @@ To execute the test suite, run the following command in your terminal or command
 
 - `npm run test`
 
-```
+## Run
 
-```
+To execute the start, run the following command in your terminal or command prompt:
+
+- `npm run start`
