@@ -38,4 +38,4 @@ EXPOSE 6379
 EXPOSE 5432
 
 # Command to run the application
-CMD ["npm", "start"]
+CMD ["npm", "test"]
