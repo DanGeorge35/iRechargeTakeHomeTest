@@ -29,6 +29,7 @@ services:
       context: .
     environment:
       PORT: 7001
+      DB_HOST: postgres
       HOST: postgres
       DB_NAME: irechargedb
       DB_PASS: password
