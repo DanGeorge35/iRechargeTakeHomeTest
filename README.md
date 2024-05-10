@@ -110,41 +110,13 @@ docker run -d -p <host-port>:<container-port> --name <container-name> <image-nam
 
 http://localhost:<host-port>
 
-### Prerequisites
 
-- Node v16.x
-- Yarn v3.x
-
-To continue/contribute to the development of the iRechargeTakeHomeTest API, clone this repository and execute the following commands in your terminal or command prompt, inside the cloned project folder:
-
-- `yarn install`
-- `yarn dev`
-
-### Code Editor/IDE
-
-This project is managed using Yarn v3 (https://yarnpkg.com/features) which means you do not need a `node_modules` folder. Also, if you are using the Visual Studio Code editor or other editor/IDE, follow this instructions to enable Yarn PnP features: https://yarnpkg.com/getting-started/editor-sdks
-
-### Contributions
-
-cc: [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/)
-
-In order to refactor, implement a new feature or fix a bug:
-
-- Create a new branch with any of the following prefixes (`feat`, `fix`, `chore`, `test` or `refactor`) e.g. `feat/crazy-idea`
-
-- Write your awesome code including tests
-
-- Commit your changes and create a PR to the `test` branch
-
-- A review application will be spawned from your PR for further testing as well trigger a CI pipeline to run the automated tests
-
-- If all goes well, your PR is merged and you're good to go!
 
 ## Tests
 
 To execute the test suite, run the following command in your terminal or command prompt:
 
-- `yarn test`
+- `npm run test`
 
 ```
 
