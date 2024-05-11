@@ -35,6 +35,8 @@ RUN npm run build
 # Expose the port the app runs on
 EXPOSE 7001
 
-
 # Command to run the application
+# CMD ["npm", "start"]
+
+# Command to TEST the application
 CMD ["npm", "test"]
