@@ -1,9 +1,29 @@
 import * as redis from 'redis'
-const redisClient = redis.createClient()
+import dotenv from 'dotenv'
+dotenv.config()
 
-redisClient.connect()
-  .then((result) => { console.log('Redis Connected successfully.', result) })
-  .catch((error) => { console.error('Unable to connect to Redis Server:', error) })
+const {
+  REDIS_HOST,
+  REDIS_PORT
+} = process.env
+
+const RH = REDIS_HOST ?? 'redis'
+const RP = Number(REDIS_PORT) ?? 6379
+
+const redisClient = redis.createClient({
+  host: RH, // This should match the service name defined in your Docker Compose file
+  port: RP // Redis default port
+} as any)
+
+// Connect to Redis
+redisClient.on('connect', () => {
+  console.log('Redis connected successfully.')
+})
+
+// Handle Redis connection errors
+redisClient.on('error', (error) => {
+  console.error('Unable to connect to Redis server:', error)
+})
 
 async function getOrSetCache (key: string, ttl: number, cb: any): Promise<any> {
   return await new Promise((resolve, reject) => {

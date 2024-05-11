@@ -143,14 +143,28 @@ docker-compose up --build
 http://localhost:7001
 
 
+### Local Machine  Deployment
 
-## Tests
+#### Prerequisites
+Make sure you have NodeJS and npm installed
+Make sure Postgres and Redis are installed and are working perfectly
+Install dependencies using npm install
+Set environment variables (you can use .env-example file to edit to your local machine configuration)
+
+#### Build
+
+To execute the build,  run the following command in your terminal or command prompt:
+
+- `npm run build`
+
+
+#### Tests
 
 To execute the test suite, run the following command in your terminal or command prompt:
 
 - `npm run test`
 
-## Run
+#### Run
 
 To execute the start, run the following command in your terminal or command prompt:
 

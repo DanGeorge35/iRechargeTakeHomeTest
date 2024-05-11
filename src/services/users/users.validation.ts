@@ -16,7 +16,10 @@ const userUpdateSchema = Joi.object({
 })
 
 const userPasswordChangeSchema = Joi.object({
-  password: Joi.string().required().min(6).pattern(passwordRegex)
+  password: Joi.string()
+    .required()
+    .min(6)
+    .pattern(passwordRegex)
     .message('Password must be at least 6 characters and include at least one uppercase letter, one lowercase letter, one digit, and one special character')
 })
 

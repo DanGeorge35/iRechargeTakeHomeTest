@@ -168,26 +168,25 @@ class UserController {
     try {
       const loginUser = req.user
       const { oldPassword, newPassword } = req.body
-      const user = await User.findByPk(loginUser.id)
-      const validate = await UsersValidation.validateUserPassword(newPassword)
+      const user = await User.findByPk(loginUser.data.id)
+      if (user == null) {
+        const resp = createErrorResponse(404, 'User not found')()
+        sendResponse(res, resp)
+        return res.end()
+      }
+
+      const validate = await UsersValidation.validateUserPassword({ password: newPassword })
       if (validate.result === 'error') {
         const resp = createErrorResponse(400, validate.message)()
         sendResponse(res, resp)
         return res.end()
       }
 
-      if (user == null) {
-        const resp = createErrorResponse(404, 'User not found')()
-        sendResponse(res, resp)
-        return res.end()
-      }
       const isValidPassword = await CheckPassword(oldPassword, user.password)
       if (!isValidPassword) {
-        return {
-          success: false,
-          message: 'Incorret Password!',
-          code: 400
-        }
+        const resp = createErrorResponse(400, 'Incorret Password!')()
+        sendResponse(res, resp)
+        return res.end()
       }
       const newPasswordHash = await EncryptPassword(newPassword)
       const duser = await user.update({ password: newPasswordHash })

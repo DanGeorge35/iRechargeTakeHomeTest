@@ -35,6 +35,7 @@ services:
       DB_PASS: password
       DB_USER: postgres
       jwtkey: irecharge-df354a95-d41b-d6a8-9eff-e13613a1f7f4
+      REDIS_PORT: 6379
     ports:
       - '7001:7001'
     depends_on:
