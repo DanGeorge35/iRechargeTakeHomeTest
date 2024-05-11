@@ -7,8 +7,11 @@ const {
 } = process.env
 
 const redisClient = redis.createClient({
-  host: REDIS_HOST, // This should match the service name defined in the Docker Compose file
-  port: 6379 // Redis default port
+  LegacyMode: true,
+  socket: {
+    host: REDIS_HOST, // This should match the service name defined in the Docker Compose file
+    port: 6379 // Redis default port
+  }
 } as any)
 
 // Connect to Redis
