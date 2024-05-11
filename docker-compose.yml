@@ -1,8 +1,17 @@
 version: '3.8'
 
 services:
+  redis:
+    image: redis:alpine
+    ports:
+      - '6379:6379'
+    networks:
+      - irecharge-network
+
   postgres:
     image: postgres:latest
+    volumes:
+      - ./postgres:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_DB: irechargedb
       POSTGRES_USER: postgres
@@ -17,32 +26,24 @@ services:
       timeout: 5s
       retries: 5
 
-  redis:
-    image: redis:alpine
-    ports:
-      - '6379:6379'
-    networks:
-      - irecharge-network
-
   app:
     build:
       context: .
-    environment:
-      PORT: 7001
-      DB_HOST: postgres
-      HOST: postgres
-      DB_NAME: irechargedb
-      DB_PASS: password
-      DB_USER: postgres
-      jwtkey: irecharge-df354a95-d41b-d6a8-9eff-e13613a1f7f4
-      REDIS_PORT: 6379
     ports:
       - '7001:7001'
+    networks:
+      - irecharge-network
+    environment:
+      DB_HOST: postgres
+      DB_NAME: irechargedb
+      DB_USER: postgres
+      DB_PASS: password
+      PORT: 7001
+      REDIS_HOST: redis
+      jwtkey: irecharge-df354a95-d41b-d6a8-9eff-e13613a1f7f4
     depends_on:
       - postgres
       - redis
-    networks:
-      - irecharge-network
 
 networks:
   irecharge-network:
