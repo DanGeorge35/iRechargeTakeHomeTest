@@ -11,7 +11,7 @@ services:
   postgres:
     image: postgres:latest
     volumes:
-      - ./postgres:/docker-entrypoint-initdb.d
+      - ./pgdata:/docker-entrypoint-initdb.d
     environment:
       POSTGRES_DB: irechargedb
       POSTGRES_USER: postgres
