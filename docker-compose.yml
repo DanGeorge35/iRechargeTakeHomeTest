@@ -13,9 +13,9 @@ services:
     volumes:
       - ./pgdata:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: irechargedb
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${DB_NAME}
+      POSTGRES_USER: ${DB_USER}
+      POSTGRES_PASSWORD: ${DB_PASS}
     ports:
       - '5432:5432'
     networks:
@@ -35,12 +35,12 @@ services:
       - irecharge-network
     environment:
       DB_HOST: postgres
-      DB_NAME: irechargedb
-      DB_USER: postgres
-      DB_PASS: password
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASS: ${DB_PASS}
       PORT: 7001
       REDIS_HOST: redis
-      jwtkey: irecharge-df354a95-d41b-d6a8-9eff-e13613a1f7f4
+      jwtkey: ${jwtkey}
     depends_on:
       - postgres
       - redis

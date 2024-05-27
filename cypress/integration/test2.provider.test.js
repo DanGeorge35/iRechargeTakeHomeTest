@@ -3,6 +3,7 @@ const ProviderEndpoint = 'http://localhost:7001/providers';
 describe('Provider API CRUD Tests', () => {
   let slug;
   let accessToken;
+
   let userdata = {
     name: 'Dan George',
     email: 'dangeorge35@gmail.com',
@@ -12,7 +13,7 @@ describe('Provider API CRUD Tests', () => {
   it('should login the user', () => {
     const credential = { email: userdata.email, password: userdata.password };
     cy.request('POST', `http://localhost:7001/auth`, credential).then((response) => {
-      expect(response.status).to.eq(201);
+      expect(response.status).to.eq(200);
       expect(response.body.success).to.eq(true);
       expect(response.body).to.have.property('token');
       accessToken = response.body.token;
@@ -28,7 +29,7 @@ describe('Provider API CRUD Tests', () => {
       }
     }).then((response) => {
       expect(response.status).to.eq(200);
-      slug = response.body.data[0];
+      slug = response.body.data[0]['slug'];
     });
   });
 
