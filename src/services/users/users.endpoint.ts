@@ -15,16 +15,6 @@ const UsersEndpoint = [
     handler: [UsersController.createUser]
   },
   {
-    path: `${ENDPOINT_URL}/:id`,
-    method: 'patch',
-    handler: [Authorization, UsersController.updateUser]
-  },
-  {
-    path: `${ENDPOINT_URL}/changepassword`,
-    method: 'put',
-    handler: [Authorization, UsersController.changePassword]
-  },
-  {
     path: `${ENDPOINT_URL}/`,
     method: 'get',
     handler: [Authorization, UsersController.getallUsers]

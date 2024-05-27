@@ -33,8 +33,8 @@ class UserController {
       data.usercode = Math.floor(lastId + 1000)
 
       data.password = await EncryptPassword(data.password)
-      const user = await User.create(data)
-
+      const user: any = await User.create(data)
+      delete user.dataValues.password
       const successResponse: IResponse = createSuccessResponse(user)
       sendResponse(res, successResponse)
       return res.end()
@@ -53,7 +53,7 @@ class UserController {
         return res.end()
       }
 
-      const user: any = await User.findOne({ where: { email } })
+      const user: any = await User.scope('withPassword').findOne({ where: { email } })
 
       if (user === null) {
         const resp = createErrorResponse(400, 'Email Address Not Found!')()
@@ -67,10 +67,10 @@ class UserController {
         sendResponse(res, resp)
         return res.end()
       }
-
+      delete user.dataValues.password
       const token = GenerateToken(user)
 
-      const successResponse: IResponse = createSuccessResponse(user, 201)
+      const successResponse: IResponse = createSuccessResponse(user, 200)
       successResponse.token = token
       sendResponse(res, successResponse)
       return res.end()

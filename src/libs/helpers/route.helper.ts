@@ -11,7 +11,7 @@ class RouteHelper {
     router.get('/', (req: any, res: any) => {
       res.setHeader('content-type', 'application/json')
       const report = {
-        message: 'Welcome to irechargetest (by Dan George)',
+        message: 'Welcome to IRechargeTest',
         code: 200
       }
       res.status(200).send(report)

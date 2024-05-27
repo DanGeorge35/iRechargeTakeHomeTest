@@ -1,5 +1,7 @@
 /* eslint-disable @typescript-eslint/no-extraneous-class */
-import providers from '../../packages'
+import { Packages, Provider } from '../../models/'
+import { type ProviderAttributes } from '../../models/provider.model'
+
 import { getOrSetCache } from '../../config/redis'
 import { type IResponse, createSuccessResponse, notFound, serverError, sendResponse } from '../../libs/helpers/response.helper'
 
@@ -8,12 +10,9 @@ const CACHE_EXPIRATION = 120
 class ProvidersController {
   static async getallProviders (req: any, res: any): Promise<any> {
     try {
-      const dresult = await getOrSetCache('providers', CACHE_EXPIRATION, () => {
-        const providerslug = []
-        for (let i = 0; i < providers.length; i++) {
-          providerslug.push(providers[i].slug)
-        }
-        return providerslug
+      const dresult = await getOrSetCache('providers', CACHE_EXPIRATION, async () => {
+        const allProviders: ProviderAttributes[] = await Provider.findAll()
+        return allProviders
       })
       const successResponse: IResponse = createSuccessResponse(dresult)
       sendResponse(res, successResponse)
@@ -25,10 +24,9 @@ class ProvidersController {
   static async getProviderPackages (req: any, res: any): Promise<any> {
     try {
       const slug = req.params.slug
-
-      const dresult = await getOrSetCache(slug, CACHE_EXPIRATION, () => {
-        const foundPackage = providers.find(provider => provider.slug === slug)
-        return foundPackage ?? null
+      const dresult = await getOrSetCache(`${slug}/packages`, CACHE_EXPIRATION, async () => {
+        const singlePackages = await Packages.findAll({ where: { provider_slug: slug } })
+        return singlePackages
       })
 
       if (dresult !== null) {
