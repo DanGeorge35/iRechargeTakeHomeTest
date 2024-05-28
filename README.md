@@ -76,19 +76,6 @@ iRechargeTakeHomeTest API is built using:
 - **Description**: Create a new user account.
 - **Handler**: UsersController.createUser
 
-### Update User Endpoint
-
-- **Path**: `http://localhost:7001/users/:id`
-- **Method**: `PATCH`
-- **Description**: Updates an existing user's information.
-- **Handler**: Authorization, UsersController.updateUser
-
-### Change Password Endpoint
-
-- **Path**: `http://localhost:7001/users/changepassword`
-- **Method**: `PUT`
-- **Description**: Allows users to change their password.
-- **Handler**: Authorization, UsersController.changePassword
 
 ### Get All Users Endpoint
 
