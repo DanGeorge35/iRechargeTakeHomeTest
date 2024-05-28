@@ -39,4 +39,4 @@ EXPOSE 7001
 # CMD ["npm", "start"]
 
 # Command to TEST the application
-CMD ["npm", "test"]
+CMD ["npm", "start"]
